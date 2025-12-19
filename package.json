@@ -18,6 +18,8 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.3.14",
+    "@electric-sql/pglite-vue": "^0.2.32",
     "pinia": "^3.0.4",
     "vue": "^3.5.25",
     "vue-router": "^4.6.3"

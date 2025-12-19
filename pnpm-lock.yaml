@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@electric-sql/pglite':
+        specifier: ^0.3.14
+        version: 0.3.14
+      '@electric-sql/pglite-vue':
+        specifier: ^0.2.32
+        version: 0.2.32(@electric-sql/pglite@0.3.14)(vue@3.5.25(typescript@5.9.3))
       pinia:
         specifier: ^3.0.4
         version: 3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))
@@ -214,6 +220,19 @@ packages:
   '@babel/types@7.28.5':
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
+
+  '@electric-sql/pglite-vue@0.2.32':
+    resolution: {integrity: sha512-egw8Pk1Sg7A5G/lUIQjAyYPkdZWcSU4qWlwnw27KWhn7ussa4YA721YbM0+j97+FfVJ7vhwhIL+8SBfsY1nHtw==}
+    peerDependencies:
+      '@electric-sql/pglite': 0.3.14
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.6.0 || ^3.3.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  '@electric-sql/pglite@0.3.14':
+    resolution: {integrity: sha512-3DB258dhqdsArOI1fIt7cb9RpUOgcDg5hXWVgVHAeqVQ/qxtFy605QKs4gx6mFq3jWsSPqDN8TgSEsqC3OfV9Q==}
 
   '@emnapi/core@1.7.1':
     resolution: {integrity: sha512-o1uhUASyo921r2XtHYOHy7gdkGLge8ghBEQHMWmyJFoXlpU58kIrhhN3w26lpQb6dspetweapMn2CSNwQ8I4wg==}
@@ -1711,6 +1730,17 @@ packages:
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
 
+  vue-demi@0.14.10:
+    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   vue-eslint-parser@10.2.0:
     resolution: {integrity: sha512-CydUvFOQKD928UzZhTp4pr2vWz1L+H99t7Pkln2QSPdvmURT0MoC4wUccfCnuEaihNsu9aYYyk+bep8rlfkUXw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -1957,6 +1987,14 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
+
+  '@electric-sql/pglite-vue@0.2.32(@electric-sql/pglite@0.3.14)(vue@3.5.25(typescript@5.9.3))':
+    dependencies:
+      '@electric-sql/pglite': 0.3.14
+      vue: 3.5.25(typescript@5.9.3)
+      vue-demi: 0.14.10(vue@3.5.25(typescript@5.9.3))
+
+  '@electric-sql/pglite@0.3.14': {}
 
   '@emnapi/core@1.7.1':
     dependencies:
@@ -3342,6 +3380,10 @@ snapshots:
       jiti: 2.6.1
 
   vscode-uri@3.1.0: {}
+
+  vue-demi@0.14.10(vue@3.5.25(typescript@5.9.3)):
+    dependencies:
+      vue: 3.5.25(typescript@5.9.3)
 
   vue-eslint-parser@10.2.0(eslint@9.39.1(jiti@2.6.1)):
     dependencies:
