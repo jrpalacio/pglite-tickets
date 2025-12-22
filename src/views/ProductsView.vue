@@ -1,16 +1,7 @@
 <script setup lang="ts">
 import { ref, inject, onMounted } from 'vue'
 import type { PGlite } from '@electric-sql/pglite'
-
-interface Producto {
-  id: number
-  name: string
-  price: number
-  category: number
-  poins: number
-  contents: string
-  created_at: string
-}
+import type { Producto } from '../types/types'
 
 // Inyectar la instancia de PGlite usando inject nativo de Vue
 const db = inject<PGlite>('db')
@@ -45,9 +36,6 @@ onMounted(async () => {
       <ul v-else class="productos-grid">
         <li v-for="producto in productos" :key="producto.id" class="producto-card">
           <h3>{{ producto.name }}</h3>
-          <p><strong>Precio:</strong> ${{ producto.price }}</p>
-          <p><strong>Contenido:</strong> {{ producto.contents }}</p>
-          <p><strong>Puntos:</strong> {{ producto.poins }}</p>
         </li>
       </ul>
     </div>
