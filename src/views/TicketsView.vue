@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { ref, inject, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import type { PGlite } from '@electric-sql/pglite'
 
 // Inyectar la instancia de PGlite y cargar tickets
 const db = inject<PGlite>('db')
+const router = useRouter()
 type TicketRow = { id: number; total: number; created_at: string }
 const tickets = ref<TicketRow[]>([])
 const loading = ref(true)
+
+const verDetalles = (ticketId: number) => {
+  router.push({ name: 'ticket-detail', params: { id: ticketId } })
+}
 
 onMounted(async () => {
   if (!db) {
@@ -35,7 +41,14 @@ onMounted(async () => {
     <div v-else>
       <div v-if="tickets.length === 0" class="sin-items">No hay tickets disponibles.</div>
       <ul v-else class="tickets-list">
-        <li v-for="t in tickets" :key="t.id" class="ticket-item">
+        <li
+          v-for="t in tickets"
+          :key="t.id"
+          class="ticket-item"
+          @click="verDetalles(t.id)"
+          role="button"
+          tabindex="0"
+        >
           <span class="ticket-id">#{{ t.id }}</span>
           <span class="ticket-total">${{ Number(t.total).toFixed(2) }}</span>
           <span class="ticket-date">{{ new Date(t.created_at).toLocaleString() }}</span>
@@ -64,6 +77,12 @@ onMounted(async () => {
   gap: 1rem;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.ticket-item:hover {
+  background: #f9f9f9;
 }
 
 .ticket-item:last-child {
