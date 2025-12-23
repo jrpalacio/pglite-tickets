@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, inject, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import type { PGlite } from '@electric-sql/pglite'
 import type { Producto } from '../types/types'
 
@@ -15,6 +16,7 @@ const productos = ref<Producto[]>([])
 const loading = ref(true)
 const itemsSeleccionados = ref<ItemSeleccionado[]>([])
 const guardando = ref(false)
+const router = useRouter()
 
 const getProducto = (id: number | null) => {
   if (!id) return null
@@ -102,6 +104,8 @@ const guardarTicket = async () => {
     // Reset y feedback
     itemsSeleccionados.value = []
     console.log('Ticket guardado correctamente, id:', ticketId)
+    // Navegar al listado de tickets
+    router.push({ name: 'tickets' })
   } catch (error) {
     console.error('Error guardando ticket:', error)
     try {
