@@ -44,6 +44,29 @@ const eliminarSelect = (index: number) => {
   itemsSeleccionados.value.splice(index, 1)
 }
 
+const saveTicket = async () => {
+  if (!db) {
+    console.error('PGlite no está disponible')
+    return
+  }
+
+  const valores = itemsSeleccionados.value
+    .map((item) => item.productoId)
+    .filter((id): id is number => id !== null)
+
+  const placeholders = valores.map(() => '(?)').join(', ')
+  const query = `INSERT INTO tickets (producto_id) VALUES ${placeholders}`
+
+  try {
+    await db.query(query, valores)
+    alert('Ticket guardado exitosamente.')
+    itemsSeleccionados.value = []
+  } catch (error) {
+    console.error('Error al guardar el ticket:', error)
+    alert('Hubo un error al guardar el ticket.')
+  }
+}
+
 onMounted(async () => {
   if (!db) {
     console.error('PGlite no está disponible')
@@ -98,6 +121,7 @@ onMounted(async () => {
               </svg>
             </button>
           </div>
+          <button type="button" class="btn-agregar" v-on:click="saveTicket">guardar ticket</button>
         </div>
         <button @click="agregarSelect" class="btn-agregar" type="button">+ Agregar Producto</button>
       </section>
