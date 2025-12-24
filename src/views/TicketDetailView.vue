@@ -130,15 +130,15 @@ const capturar = async () => {
   capturing.value = true
   try {
     const canvas = await html2canvas(node, { scale: 2 })
-    
+
     // Convertir canvas a blob
     const blob = await new Promise<Blob>((resolve) => {
       canvas.toBlob((blob) => resolve(blob!), 'image/png')
     })
-    
+
     const fileName = `ticket-${ticketId.value}.png`
     const file = new File([blob], fileName, { type: 'image/png' })
-    
+
     // Intentar compartir si está disponible
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
       await navigator.share({
