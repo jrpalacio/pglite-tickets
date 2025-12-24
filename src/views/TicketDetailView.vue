@@ -130,11 +130,30 @@ const capturar = async () => {
   capturing.value = true
   try {
     const canvas = await html2canvas(node, { scale: 2 })
-    const dataUrl = canvas.toDataURL('image/png')
-    const link = document.createElement('a')
-    link.href = dataUrl
-    link.download = `ticket-${ticketId.value}.png`
-    link.click()
+    
+    // Convertir canvas a blob
+    const blob = await new Promise<Blob>((resolve) => {
+      canvas.toBlob((blob) => resolve(blob!), 'image/png')
+    })
+    
+    const fileName = `ticket-${ticketId.value}.png`
+    const file = new File([blob], fileName, { type: 'image/png' })
+    
+    // Intentar compartir si está disponible
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: `Ticket #${ticketId.value}`,
+        text: `Ticket - Total: $${Number(ticket.value?.total).toFixed(2)}`,
+      })
+    } else {
+      // Fallback: descargar la imagen
+      const dataUrl = canvas.toDataURL('image/png')
+      const link = document.createElement('a')
+      link.href = dataUrl
+      link.download = fileName
+      link.click()
+    }
   } catch (error) {
     console.error('Error al capturar la imagen:', error)
   } finally {
