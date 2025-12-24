@@ -21,6 +21,7 @@ interface Ticket {
 const db = inject<PGlite>('db')
 const router = useRouter()
 const route = useRoute()
+const ticketDetailRef = ref<HTMLElement | null>(null)
 const ticketId = ref<number>(Number(route.params.id))
 const ticket = ref<Ticket | null>(null)
 const detalles = ref<TicketDetail[]>([])
@@ -28,6 +29,7 @@ const loading = ref(true)
 const sharing = ref(false)
 const copying = ref(false)
 const copied = ref(false)
+const capturing = ref(false)
 const canShare = typeof navigator !== 'undefined' && 'share' in navigator
 const canCopy = typeof navigator !== 'undefined' && !!navigator.clipboard?.writeText
 
@@ -120,6 +122,28 @@ const compartir = async () => {
     sharing.value = false
   }
 }
+
+const capturar = async () => {
+  const node = ticketDetailRef.value
+  if (!node) return
+  capturing.value = true
+  try {
+    // @ts-expect-error - import remoto para captura
+    const { default: html2canvas } = await import(
+      'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm'
+    )
+    const canvas = await html2canvas(node, { scale: 2 })
+    const dataUrl = canvas.toDataURL('image/png')
+    const link = document.createElement('a')
+    link.href = dataUrl
+    link.download = `ticket-${ticketId.value}.png`
+    link.click()
+  } catch (error) {
+    console.error('Error al capturar la imagen:', error)
+  } finally {
+    capturing.value = false
+  }
+}
 </script>
 
 <template>
@@ -127,19 +151,24 @@ const compartir = async () => {
     <div class="header">
       <button @click="volver" class="btn-volver">← Volver</button>
       <h1 v-if="ticket">Ticket #{{ ticket.id }}</h1>
-      <button class="btn-share" type="button" :disabled="sharing || copying" @click="compartir">
-        <span v-if="sharing">Compartiendo...</span>
-        <span v-else-if="copying">Copiando enlace...</span>
-        <span v-else-if="copied">¡Copiado!</span>
-        <span v-else>Compartir</span>
-      </button>
+      <div class="actions">
+        <button class="btn-share" type="button" :disabled="sharing || copying" @click="compartir">
+          <span v-if="sharing">Compartiendo...</span>
+          <span v-else-if="copying">Copiando enlace...</span>
+          <span v-else-if="copied">¡Copiado!</span>
+          <span v-else>Compartir</span>
+        </button>
+        <button class="btn-capture" type="button" :disabled="capturing" @click="capturar">
+          {{ capturing ? 'Capturando...' : 'Guardar captura' }}
+        </button>
+      </div>
     </div>
 
     <div v-if="loading" class="loading">Cargando detalles del ticket...</div>
 
     <div v-else-if="!ticket" class="sin-items">Ticket no encontrado.</div>
 
-    <div v-else class="ticket-detail">
+    <div v-else class="ticket-detail" ref="ticketDetailRef">
       <section class="ticket-info">
         <div class="info-item">
           <span class="label">Fecha:</span>
@@ -186,6 +215,13 @@ const compartir = async () => {
   margin-bottom: 2rem;
 }
 
+.actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .btn-volver {
   padding: 0.5rem 1rem;
   background: #f0f0f0;
@@ -220,6 +256,27 @@ const compartir = async () => {
 
 .btn-share:not(:disabled):hover {
   background: #36a373;
+}
+
+.btn-capture {
+  padding: 0.5rem 1rem;
+  background: #2c3e50;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.btn-capture:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-capture:not(:disabled):hover {
+  background: #1f2f3f;
 }
 
 .loading {
