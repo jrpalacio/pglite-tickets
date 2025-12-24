@@ -20,6 +20,7 @@
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",
     "@electric-sql/pglite-vue": "^0.2.32",
+    "html2canvas": "^1.4.1",
     "pinia": "^3.0.4",
     "vue": "^3.5.25",
     "vue-router": "^4.6.3"

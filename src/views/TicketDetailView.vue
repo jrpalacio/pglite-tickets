@@ -2,6 +2,7 @@
 import { ref, inject, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import type { PGlite } from '@electric-sql/pglite'
+import html2canvas from 'html2canvas'
 
 interface TicketDetail {
   ticket_id: number
@@ -128,10 +129,6 @@ const capturar = async () => {
   if (!node) return
   capturing.value = true
   try {
-    // @ts-expect-error - import remoto para captura
-    const { default: html2canvas } = await import(
-      'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm'
-    )
     const canvas = await html2canvas(node, { scale: 2 })
     const dataUrl = canvas.toDataURL('image/png')
     const link = document.createElement('a')
