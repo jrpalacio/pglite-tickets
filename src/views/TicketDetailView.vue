@@ -25,6 +25,11 @@ const ticketId = ref<number>(Number(route.params.id))
 const ticket = ref<Ticket | null>(null)
 const detalles = ref<TicketDetail[]>([])
 const loading = ref(true)
+const sharing = ref(false)
+const copying = ref(false)
+const copied = ref(false)
+const canShare = typeof navigator !== 'undefined' && 'share' in navigator
+const canCopy = typeof navigator !== 'undefined' && !!navigator.clipboard?.writeText
 
 onMounted(async () => {
   if (!db) {
@@ -71,6 +76,50 @@ onMounted(async () => {
 const volver = () => {
   router.back()
 }
+
+const copyLink = async () => {
+  if (!canCopy) {
+    console.warn('Copiado no está disponible en este navegador')
+    return
+  }
+  copying.value = true
+  copied.value = false
+  try {
+    const url = typeof window !== 'undefined' ? window.location.href : ''
+    await navigator.clipboard.writeText(url)
+    copied.value = true
+    setTimeout(() => {
+      copied.value = false
+    }, 1500)
+  } catch (error) {
+    console.error('Error al copiar enlace:', error)
+  } finally {
+    copying.value = false
+  }
+}
+
+const compartir = async () => {
+  if (!ticket.value) return
+  if (!canShare) {
+    await copyLink()
+    return
+  }
+  sharing.value = true
+  try {
+    const shareData = {
+      title: `Ticket #${ticket.value.id}`,
+      text: `Total: $${Number(ticket.value.total).toFixed(2)}`,
+      url: typeof window !== 'undefined' ? window.location.href : undefined,
+    }
+    await (navigator as Navigator & { share?: (data: ShareData) => Promise<void> }).share?.(
+      shareData,
+    )
+  } catch (error) {
+    console.error('Error al compartir:', error)
+  } finally {
+    sharing.value = false
+  }
+}
 </script>
 
 <template>
@@ -78,6 +127,12 @@ const volver = () => {
     <div class="header">
       <button @click="volver" class="btn-volver">← Volver</button>
       <h1 v-if="ticket">Ticket #{{ ticket.id }}</h1>
+      <button class="btn-share" type="button" :disabled="sharing || copying" @click="compartir">
+        <span v-if="sharing">Compartiendo...</span>
+        <span v-else-if="copying">Copiando enlace...</span>
+        <span v-else-if="copied">¡Copiado!</span>
+        <span v-else>Compartir</span>
+      </button>
     </div>
 
     <div v-if="loading" class="loading">Cargando detalles del ticket...</div>
@@ -143,6 +198,28 @@ const volver = () => {
 
 .btn-volver:hover {
   background: #e0e0e0;
+}
+
+.btn-share {
+  margin-left: auto;
+  padding: 0.5rem 1rem;
+  background: #42b983;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.btn-share:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-share:not(:disabled):hover {
+  background: #36a373;
 }
 
 .loading {
