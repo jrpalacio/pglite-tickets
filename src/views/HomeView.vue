@@ -135,7 +135,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main class="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 py-12 px-4 sm:px-6 lg:px-8">
+  <main
+    class="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 py-12 px-4 sm:px-6 lg:px-8"
+  >
     <div class="max-w-6xl mx-auto">
       <!-- Header -->
       <div class="mb-12">
@@ -219,9 +221,12 @@ onMounted(async () => {
 
                 <!-- Product Info -->
                 <div v-if="getProducto(item.productoId)" class="mt-2 text-sm text-slate-300">
-                  Subtotal: <span class="text-emerald-400 font-semibold">${{
-                    ((getProducto(item.productoId)?.price || 0) * (item.quantity || 1)).toFixed(2)
-                  }}</span>
+                  Subtotal:
+                  <span class="text-emerald-400 font-semibold"
+                    >${{
+                      ((getProducto(item.productoId)?.price || 0) * (item.quantity || 1)).toFixed(2)
+                    }}</span
+                  >
                 </div>
               </div>
             </div>
@@ -251,7 +256,9 @@ onMounted(async () => {
           >
             <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
               <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" />
+                <path
+                  d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                />
               </svg>
               Resumen
             </h2>
@@ -287,7 +294,14 @@ onMounted(async () => {
                 />
               </svg>
               <svg v-else class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                />
                 <path
                   class="opacity-75"
                   fill="currentColor"
