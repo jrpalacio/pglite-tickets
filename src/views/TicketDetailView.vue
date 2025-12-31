@@ -135,12 +135,22 @@ const capturar = async () => {
     // Esperar a que el DOM se renderice completamente
     await new Promise((resolve) => setTimeout(resolve, 100))
 
-    const canvas = await html2canvas(node, {
+    // Clonar el elemento para evitar problemas con colores oklch
+    const clone = node.cloneNode(true) as HTMLElement
+    clone.style.position = 'absolute'
+    clone.style.left = '-9999px'
+    clone.style.top = '-9999px'
+    document.body.appendChild(clone)
+
+    const canvas = await html2canvas(clone, {
       scale: 2,
       useCORS: true,
       allowTaint: true,
-      backgroundColor: '#0f172a', // slate-950
+      backgroundColor: '#0f172a',
     })
+
+    // Remover el clon después de capturar
+    document.body.removeChild(clone)
 
     // Convertir canvas a blob
     const blob = await new Promise<Blob>((resolve, reject) => {
