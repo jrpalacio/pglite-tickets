@@ -37,7 +37,9 @@ import { RouterLink } from 'vue-router'
           <RouterLink
             to="/tickets"
             class="group flex flex-col items-center gap-2 px-6 py-3 rounded-lg transition-all duration-300 hover:bg-slate-100 active:bg-emerald-50"
-            :class="$route.path === '/tickets' ? 'bg-emerald-50 text-emerald-600' : 'text-slate-700'"
+            :class="
+              $route.path === '/tickets' ? 'bg-emerald-50 text-emerald-600' : 'text-slate-700'
+            "
           >
             <svg
               class="w-6 h-6 transition-colors"
