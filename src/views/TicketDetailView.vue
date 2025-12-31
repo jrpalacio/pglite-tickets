@@ -126,21 +126,38 @@ const compartir = async () => {
 
 const capturar = async () => {
   const node = ticketDetailRef.value
-  if (!node) return
+  if (!node) {
+    console.error('Elemento no encontrado para capturar')
+    return
+  }
   capturing.value = true
   try {
-    const canvas = await html2canvas(node, { scale: 2 })
+    // Esperar a que el DOM se renderice completamente
+    await new Promise((resolve) => setTimeout(resolve, 100))
 
-    // Convertir canvas a blob
-    const blob = await new Promise<Blob>((resolve) => {
-      canvas.toBlob((blob) => resolve(blob!), 'image/png')
+    const canvas = await html2canvas(node, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#0f172a', // slate-950
     })
 
-    const fileName = `ticket-${ticketId.value}.png`
+    // Convertir canvas a blob
+    const blob = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(blob)
+        } else {
+          reject(new Error('No se pudo convertir el canvas a blob'))
+        }
+      }, 'image/png')
+    })
+
+    const fileName = `ticket-${ticketId.value}-${Date.now()}.png`
     const file = new File([blob], fileName, { type: 'image/png' })
 
     // Intentar compartir si está disponible
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+    if (canShare && navigator.canShare?.({ files: [file] })) {
       await navigator.share({
         files: [file],
         title: `Ticket #${ticketId.value}`,
@@ -152,7 +169,9 @@ const capturar = async () => {
       const link = document.createElement('a')
       link.href = dataUrl
       link.download = fileName
+      document.body.appendChild(link)
       link.click()
+      document.body.removeChild(link)
     }
   } catch (error) {
     console.error('Error al capturar la imagen:', error)
