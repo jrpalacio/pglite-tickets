@@ -163,255 +163,129 @@ const capturar = async () => {
 </script>
 
 <template>
-  <main>
-    <div class="header">
-      <button @click="volver" class="btn-volver">← Volver</button>
-      <h1 v-if="ticket">Ticket #{{ ticket.id }}</h1>
-      <div class="actions">
-        <button class="btn-share" type="button" :disabled="sharing || copying" @click="compartir">
-          <span v-if="sharing">Compartiendo...</span>
-          <span v-else-if="copying">Copiando enlace...</span>
-          <span v-else-if="copied">¡Copiado!</span>
-          <span v-else>Compartir</span>
+  <main
+    class="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white p-4 sm:p-6"
+  >
+    <div class="max-w-4xl mx-auto">
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <button
+          @click="volver"
+          class="flex items-center gap-2 px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors text-sm font-medium w-fit"
+        >
+          ← Volver
         </button>
-        <button class="btn-capture" type="button" :disabled="capturing" @click="capturar">
-          {{ capturing ? 'Capturando...' : 'Guardar captura' }}
-        </button>
+        <h1 v-if="ticket" class="text-2xl sm:text-3xl font-bold text-emerald-400">
+          Ticket #{{ ticket.id }}
+        </h1>
+        <div v-else class="text-2xl sm:text-3xl font-bold text-slate-400">Detalles</div>
+
+        <div class="flex gap-2 flex-wrap sm:flex-nowrap">
+          <button
+            class="flex-1 sm:flex-none px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors font-medium text-sm"
+            type="button"
+            :disabled="sharing || copying"
+            @click="compartir"
+          >
+            <span v-if="sharing">Compartiendo...</span>
+            <span v-else-if="copying">Copiando enlace...</span>
+            <span v-else-if="copied">¡Copiado!</span>
+            <span v-else>📤 Compartir</span>
+          </button>
+          <button
+            class="flex-1 sm:flex-none px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors font-medium text-sm"
+            type="button"
+            :disabled="capturing"
+            @click="capturar"
+          >
+            {{ capturing ? '⏳ Capturando...' : '📸 Guardar captura' }}
+          </button>
+        </div>
       </div>
-    </div>
 
-    <div v-if="loading" class="loading">Cargando detalles del ticket...</div>
+      <!-- Loading State -->
+      <div v-if="loading" class="flex flex-col items-center justify-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mb-4"></div>
+        <p class="text-slate-400">Cargando detalles del ticket...</p>
+      </div>
 
-    <div v-else-if="!ticket" class="sin-items">Ticket no encontrado.</div>
+      <!-- Not Found State -->
+      <div
+        v-else-if="!ticket"
+        class="bg-slate-800 border border-slate-700 rounded-lg p-8 text-center"
+      >
+        <p class="text-slate-300">📋 Ticket no encontrado.</p>
+      </div>
 
-    <div v-else class="ticket-detail" ref="ticketDetailRef">
-      <section class="ticket-info">
-        <div class="info-item">
-          <span class="label">Fecha:</span>
-          <span class="value">{{ new Date(ticket.created_at).toLocaleString() }}</span>
+      <!-- Ticket Details -->
+      <div v-else ref="ticketDetailRef" class="space-y-6">
+        <!-- Ticket Info Card -->
+        <div
+          class="bg-slate-800 border border-slate-700 rounded-lg p-6 hover:border-emerald-500/50 transition-colors"
+        >
+          <h2 class="text-lg font-semibold mb-4 text-emerald-400">Información del Ticket</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex justify-between items-center p-3 bg-slate-700/50 rounded-lg">
+              <span class="font-medium text-slate-300">Fecha:</span>
+              <span class="text-white">{{ new Date(ticket.created_at).toLocaleString() }}</span>
+            </div>
+            <div class="flex justify-between items-center p-3 bg-slate-700/50 rounded-lg">
+              <span class="font-medium text-slate-300">Total:</span>
+              <span class="text-xl font-bold text-emerald-400"
+                >${{ Number(ticket.total).toFixed(2) }}</span
+              >
+            </div>
+          </div>
         </div>
-        <div class="info-item">
-          <span class="label">Total:</span>
-          <span class="value total">${{ Number(ticket.total).toFixed(2) }}</span>
+
+        <!-- Products Table -->
+        <div
+          v-if="detalles.length > 0"
+          class="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden"
+        >
+          <div class="px-6 py-4 border-b border-slate-700 bg-slate-700/50">
+            <h2 class="text-lg font-semibold text-emerald-400">📦 Productos</h2>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-slate-700/50 border-b border-slate-700">
+                <tr>
+                  <th class="px-6 py-3 text-left text-sm font-semibold text-slate-300">Producto</th>
+                  <th class="px-6 py-3 text-right text-sm font-semibold text-slate-300">Precio</th>
+                  <th class="px-6 py-3 text-center text-sm font-semibold text-slate-300">
+                    Cantidad
+                  </th>
+                  <th class="px-6 py-3 text-right text-sm font-semibold text-slate-300">
+                    Subtotal
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-700">
+                <tr
+                  v-for="d in detalles"
+                  :key="d.product_id"
+                  class="hover:bg-slate-700/30 transition-colors"
+                >
+                  <td class="px-6 py-4 text-sm font-medium text-white">{{ d.product_name }}</td>
+                  <td class="px-6 py-4 text-sm text-right text-slate-300">
+                    ${{ Number(d.price).toFixed(2) }}
+                  </td>
+                  <td class="px-6 py-4 text-sm text-center text-slate-300">{{ d.quantity }}</td>
+                  <td class="px-6 py-4 text-sm text-right font-semibold text-emerald-400">
+                    ${{ Number(d.subtotal).toFixed(2) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </section>
 
-      <section v-if="detalles.length > 0" class="detalles">
-        <h2>Productos</h2>
-        <table class="detalles-table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Precio</th>
-              <th>Cantidad</th>
-              <th>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="d in detalles" :key="d.product_id" class="detail-row">
-              <td class="product-name">{{ d.product_name }}</td>
-              <td class="price">${{ Number(d.price).toFixed(2) }}</td>
-              <td class="quantity">{{ d.quantity }}</td>
-              <td class="subtotal">${{ Number(d.subtotal).toFixed(2) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <div v-else class="sin-items">No hay detalles en este ticket.</div>
+        <!-- Empty Details State -->
+        <div v-else class="bg-slate-800 border border-slate-700 rounded-lg p-8 text-center">
+          <p class="text-slate-400">📭 No hay detalles en este ticket.</p>
+        </div>
+      </div>
     </div>
   </main>
 </template>
-
-<style scoped>
-.header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.actions {
-  margin-left: auto;
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.btn-volver {
-  padding: 0.5rem 1rem;
-  background: #f0f0f0;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s ease;
-}
-
-.btn-volver:hover {
-  background: #e0e0e0;
-}
-
-.btn-share {
-  margin-left: auto;
-  padding: 0.5rem 1rem;
-  background: #42b983;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: background 0.2s ease;
-}
-
-.btn-share:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.btn-share:not(:disabled):hover {
-  background: #36a373;
-}
-
-.btn-capture {
-  padding: 0.5rem 1rem;
-  background: #2c3e50;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
-  transition: background 0.2s ease;
-}
-
-.btn-capture:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.btn-capture:not(:disabled):hover {
-  background: #1f2f3f;
-}
-
-.loading {
-  text-align: center;
-  padding: 2rem;
-  color: #999;
-}
-
-.sin-items {
-  text-align: center;
-  padding: 2rem 1rem;
-  color: #999;
-  font-style: italic;
-}
-
-.ticket-detail {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.ticket-info {
-  background: #f9f9f9;
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.info-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.label {
-  font-weight: 600;
-  color: #333;
-}
-
-.value {
-  color: #666;
-}
-
-.total {
-  color: #42b983;
-  font-size: 1.2em;
-  font-weight: 600;
-}
-
-.detalles {
-  margin-bottom: 2rem;
-}
-
-.detalles h2 {
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.detalles-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.detalles-table thead {
-  background: #f9f9f9;
-}
-
-.detalles-table th {
-  padding: 1rem;
-  text-align: left;
-  font-weight: 600;
-  color: #333;
-  border-bottom: 2px solid #ddd;
-}
-
-.detalles-table td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #eee;
-}
-
-.detail-row:last-child td {
-  border-bottom: none;
-}
-
-.product-name {
-  font-weight: 500;
-  color: #333;
-}
-
-.price,
-.quantity,
-.subtotal {
-  text-align: right;
-  color: #666;
-}
-
-.subtotal {
-  color: #42b983;
-  font-weight: 600;
-}
-
-@media (max-width: 600px) {
-  .ticket-info {
-    grid-template-columns: 1fr;
-  }
-
-  .detalles-table {
-    font-size: 14px;
-  }
-
-  .detalles-table th,
-  .detalles-table td {
-    padding: 0.5rem;
-  }
-}
-</style>
