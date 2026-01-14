@@ -10,16 +10,34 @@ import { RouterLink } from 'vue-router'
     </main>
 
     <!-- Navigation Footer -->
-    <footer class="border-t border-slate-200 bg-white shadow-lg">
-      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-center gap-8 py-6">
+    <footer
+      class="relative border-t border-slate-700/50 bg-linear-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl shadow-slate-900/50 backdrop-blur-sm"
+    >
+      <!-- Gradient overlay -->
+      <div
+        class="absolute inset-0 bg-linear-to-b from-transparent to-slate-900/20 pointer-events-none"
+      ></div>
+
+      <nav class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-center gap-4 py-4">
           <RouterLink
             to="/"
-            class="group flex flex-col items-center gap-2 px-6 py-3 rounded-lg transition-all duration-300 hover:bg-slate-100 active:bg-emerald-50"
-            :class="$route.path === '/' ? 'bg-emerald-50 text-emerald-600' : 'text-slate-700'"
+            class="group relative flex flex-col items-center gap-2 px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105"
+            :class="
+              $route.path === '/'
+                ? 'bg-linear-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/40'
+                : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+            "
           >
+            <!-- Active indicator bar -->
+            <div
+              v-if="$route.path === '/'"
+              class="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-linear-to-r from-emerald-400 to-emerald-300 rounded-full"
+            ></div>
+
             <svg
-              class="w-6 h-6 transition-colors"
+              class="w-7 h-7 transition-transform duration-300 group-hover:scale-110"
+              :class="$route.path === '/' ? 'drop-shadow-lg' : ''"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -31,18 +49,32 @@ import { RouterLink } from 'vue-router'
                 d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
               />
             </svg>
-            <span class="text-sm font-semibold">Crear Ticket</span>
+            <span class="text-sm font-bold tracking-wide">Crear Ticket</span>
+
+            <!-- Glow effect on hover -->
+            <div
+              class="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-br from-emerald-500/20 to-transparent pointer-events-none"
+            ></div>
           </RouterLink>
 
           <RouterLink
             to="/tickets"
-            class="group flex flex-col items-center gap-2 px-6 py-3 rounded-lg transition-all duration-300 hover:bg-slate-100 active:bg-emerald-50"
+            class="group relative flex flex-col items-center gap-2 px-8 py-4 rounded-xl transition-all duration-300 hover:scale-105"
             :class="
-              $route.path === '/tickets' ? 'bg-emerald-50 text-emerald-600' : 'text-slate-700'
+              $route.path === '/tickets'
+                ? 'bg-linear-to-br from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/40'
+                : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
             "
           >
+            <!-- Active indicator bar -->
+            <div
+              v-if="$route.path === '/tickets'"
+              class="absolute -top-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-linear-to-r from-emerald-400 to-emerald-300 rounded-full"
+            ></div>
+
             <svg
-              class="w-6 h-6 transition-colors"
+              class="w-7 h-7 transition-transform duration-300 group-hover:scale-110"
+              :class="$route.path === '/tickets' ? 'drop-shadow-lg' : ''"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -54,7 +86,12 @@ import { RouterLink } from 'vue-router'
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <span class="text-sm font-semibold">Mis Tickets</span>
+            <span class="text-sm font-bold tracking-wide">Mis Tickets</span>
+
+            <!-- Glow effect on hover -->
+            <div
+              class="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-br from-emerald-500/20 to-transparent pointer-events-none"
+            ></div>
           </RouterLink>
         </div>
       </nav>
