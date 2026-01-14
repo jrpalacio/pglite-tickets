@@ -185,8 +185,8 @@ onMounted(async () => {
                   <ListItems
                     v-model="item.productoId"
                     :products="productos"
-                    placeholder="-- Selecciona un producto --"
-                    class="flex-1"
+                    placeholder="Selecciona un producto"
+                    class="w-full"
                   />
 
                   <!-- Quantity Input -->
