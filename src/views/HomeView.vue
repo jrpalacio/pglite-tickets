@@ -84,8 +84,8 @@ const guardarTicket = async () => {
 
     // Insertar el ticket y obtener id
     const ticketRes = await db.query<{ id: number }>(
-      'INSERT INTO tickets (total) VALUES ($1) RETURNING id',
-      [totalPrecio.value],
+      'INSERT INTO tickets (total, acumulated_poins) VALUES ($1, $2 ) RETURNING id',
+      [totalPrecio.value, totalPuntos.value],
     )
     const ticketId = ticketRes.rows[0]?.id
     if (!ticketId) throw new Error('No se pudo crear el ticket')
