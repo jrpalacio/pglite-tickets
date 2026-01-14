@@ -3,6 +3,7 @@ import { ref, inject, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import type { PGlite } from '@electric-sql/pglite'
 import type { Producto } from '../types/types'
+import ListItems from '../components/ListItems.vue'
 
 interface ItemSeleccionado {
   id: string
@@ -180,16 +181,13 @@ onMounted(async () => {
                 class="bg-linear-to-r from-slate-700 to-slate-600 border border-slate-500 hover:border-emerald-500 rounded-lg p-4 transition-all"
               >
                 <div class="flex flex-col sm:flex-row gap-3 items-center">
-                  <!-- Select Product -->
-                  <select
-                    v-model.number="item.productoId"
-                    class="flex-1 bg-slate-800 border border-slate-500 text-white rounded px-3 py-2 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-                  >
-                    <option :value="null" class="bg-slate-800">-- Selecciona un producto --</option>
-                    <option v-for="p in productos" :key="p.id" :value="p.id" class="bg-slate-800">
-                      {{ p.name }} - ${{ p.price }} ({{ p.poins }} pts)
-                    </option>
-                  </select>
+                  <!-- Select Product (ListItems) -->
+                  <ListItems
+                    v-model="item.productoId"
+                    :products="productos"
+                    placeholder="-- Selecciona un producto --"
+                    class="flex-1"
+                  />
 
                   <!-- Quantity Input -->
                   <div class="flex items-center gap-2">
